@@ -1,4 +1,8 @@
 #!/usr/bin/env npx tsx
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 
 /**
  * Test script to verify n8n_autofix_workflow documentation is properly integrated

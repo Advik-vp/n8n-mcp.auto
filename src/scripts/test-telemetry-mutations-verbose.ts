@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Test telemetry mutations with enhanced logging
  * Verifies that mutations are properly tracked and persisted
  */

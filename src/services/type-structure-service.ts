@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Type Structure Service
  *
  * Provides methods to query and work with n8n property type structures.

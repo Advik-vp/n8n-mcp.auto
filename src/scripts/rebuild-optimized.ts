@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Optimized rebuild script that extracts and stores source code at build time
  * This eliminates the need for n8n packages at runtime
  */

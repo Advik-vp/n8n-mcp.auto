@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * n8n Version Detection and Version-Aware Settings Filtering
  *
  * This module provides version detection for n8n instances and filters

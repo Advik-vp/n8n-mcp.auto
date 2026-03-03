@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Normalizes node type from n8n export format to database format
  * 
  * Examples:

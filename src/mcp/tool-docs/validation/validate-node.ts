@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import { ToolDocumentation } from '../types';
 
 export const validateNodeDoc: ToolDocumentation = {

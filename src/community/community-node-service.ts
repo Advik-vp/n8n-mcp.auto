@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import { logger } from '../utils/logger';
 import { NodeRepository, CommunityNodeFields } from '../database/node-repository';
 import { ParsedNode } from '../parsers/node-parser';

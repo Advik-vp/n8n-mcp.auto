@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * ExampleGenerator Service
  * 
  * Provides concrete, working examples for n8n nodes to help AI agents

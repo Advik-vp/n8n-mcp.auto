@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * SQLiteStorageService - A simple wrapper around DatabaseAdapter for benchmarks
  */
 import { DatabaseAdapter, createDatabaseAdapter } from '../database/database-adapter';

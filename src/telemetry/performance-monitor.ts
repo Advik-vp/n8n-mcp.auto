@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Performance Monitor for Telemetry
  * Tracks telemetry overhead and provides performance insights
  */

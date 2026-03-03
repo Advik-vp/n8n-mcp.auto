@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Task Templates Service
  *
  * @deprecated This module is deprecated as of v2.15.0 and will be removed in v2.16.0.

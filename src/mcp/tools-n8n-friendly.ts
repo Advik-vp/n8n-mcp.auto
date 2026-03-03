@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * n8n-friendly tool descriptions
  * These descriptions are optimized to reduce schema validation errors in n8n's AI Agent
  * 

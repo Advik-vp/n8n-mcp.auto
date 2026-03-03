@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Trigger Registry - central registry for trigger handlers
  *
  * Uses the plugin pattern for extensibility:

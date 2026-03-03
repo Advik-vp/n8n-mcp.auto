@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Expression Format Validator for n8n expressions
  *
  * Combines universal expression validation with node-specific intelligence

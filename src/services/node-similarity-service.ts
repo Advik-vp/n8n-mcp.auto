@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import { NodeRepository } from '../database/node-repository';
 import { logger } from '../utils/logger';
 import { ToolVariantGenerator } from './tool-variant-generator';

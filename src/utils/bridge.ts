@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import { INodeExecutionData, IDataObject } from 'n8n-workflow';
 
 export class N8NMCPBridge {

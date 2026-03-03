@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Trigger system for n8n_test_workflow tool
  *
  * Provides extensible trigger handling for different n8n trigger types:

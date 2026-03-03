@@ -15,27 +15,71 @@ import * as path from 'path';
 
 async function rebuild() {
   console.log('🔄 Rebuilding n8n node database...\n');
-  
+
   const dbPath = process.env.NODE_DB_PATH || './data/nodes.db';
+  if (fs.existsSync(dbPath)) {
+    try {
+      fs.unlinkSync(dbPath);
+      console.log(`🗑️  Deleted existing database at ${dbPath}`);
+    } catch (e) {
+      console.warn(`⚠️  Could not delete existing database: ${(e as Error).message}`);
+    }
+  }
   const db = await createDatabaseAdapter(dbPath);
   const loader = new N8nNodeLoader();
   const parser = new NodeParser();
   const mapper = new DocsMapper();
   const repository = new NodeRepository(db);
   const toolVariantGenerator = new ToolVariantGenerator();
-  
+
   // Initialize database
-  const schema = fs.readFileSync(path.join(__dirname, '../../src/database/schema.sql'), 'utf8');
-  db.exec(schema);
-  
+  const schemaPath = path.join(__dirname, '../../src/database/schema.sql');
+  const schema = fs.readFileSync(schemaPath, 'utf8');
+
+  const hasFTS5 = db.checkFTS5Support();
+  if (hasFTS5) {
+    db.exec(schema);
+  } else {
+    console.warn('⚠️  FTS5 support not detected. Cleaning schema to remove virtual tables and triggers...');
+    let safeSchema = schema;
+    // Remove FTS5 virtual table
+    safeSchema = safeSchema.replace(/CREATE VIRTUAL TABLE[\s\S]*?;/gi, '-- FTS5 virtual table removed');
+    // Remove FTS5 triggers
+    safeSchema = safeSchema.replace(/CREATE TRIGGER[\s\S]*?nodes_fts[\s\S]*?END;/gi, '-- FTS5 trigger removed');
+
+    fs.writeFileSync('./data/safe_schema.sql', safeSchema);
+
+    try {
+      db.exec(safeSchema);
+    } catch (error) {
+      console.error('❌ Failed to initialize database schema even after cleaning:', (error as Error).message);
+      // Fallback: try one more time by removing all virtual table/trigger references
+      console.warn('🔄 Attempting more aggressive schema cleaning...');
+      const lines = schema.split('\n');
+      const filteredLines = lines.filter(line =>
+        !line.toUpperCase().includes('VIRTUAL') &&
+        !line.toUpperCase().includes('TRIGGER') &&
+        !line.toUpperCase().includes('FTS5')
+      );
+      try {
+        db.exec(filteredLines.join('\n'));
+      } catch (retryError) {
+        throw new Error(`Schema initialization failed: ${(retryError as Error).message}`);
+      }
+    }
+  }
+
+  const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all() as any[];
+  console.log(`📋 Tables in database before delete: ${tables.map(t => t.name).sort().join(', ')}`);
+
   // Clear existing data
   db.exec('DELETE FROM nodes');
   console.log('🗑️  Cleared existing data\n');
-  
+
   // Load all nodes
   const nodes = await loader.loadAllNodes();
   console.log(`📦 Loaded ${nodes.length} nodes from packages\n`);
-  
+
   // Statistics
   const stats = {
     successful: 0,
@@ -48,11 +92,11 @@ async function rebuild() {
     withDocs: 0,
     toolVariants: 0
   };
-  
+
   // Process each node (documentation fetching must be outside transaction due to async)
   console.log('🔄 Processing nodes...');
   const processedNodes: Array<{ parsed: ParsedNode; docs: string | undefined; nodeName: string }> = [];
-  
+
   for (const { packageName, nodeName, NodeClass } of nodes) {
     try {
       // Parse node
@@ -96,16 +140,16 @@ async function rebuild() {
       console.error(`❌ Failed to process ${nodeName}: ${errorMessage}`);
     }
   }
-  
+
   // Now save all processed nodes to database
   console.log(`\n💾 Saving ${processedNodes.length} processed nodes to database...`);
-  
+
   let saved = 0;
   for (const { parsed, docs, nodeName } of processedNodes) {
     try {
       repository.saveNode(parsed);
       saved++;
-      
+
       // Update statistics
       stats.successful++;
       if (parsed.isAITool) stats.aiTools++;
@@ -114,7 +158,7 @@ async function rebuild() {
       if (parsed.properties.length > 0) stats.withProperties++;
       if (parsed.operations.length > 0) stats.withOperations++;
       if (docs) stats.withDocs++;
-      
+
       console.log(`✅ ${parsed.nodeType} [Props: ${parsed.properties.length}, Ops: ${parsed.operations.length}]`);
     } catch (error) {
       stats.failed++;
@@ -122,14 +166,14 @@ async function rebuild() {
       console.error(`❌ Failed to save ${nodeName}: ${errorMessage}`);
     }
   }
-  
+
   console.log(`💾 Save completed: ${saved} nodes saved successfully`);
-  
+
   // Validation check
   console.log('\n🔍 Running validation checks...');
   try {
     const validationResults = validateDatabase(repository);
-    
+
     if (!validationResults.passed) {
       console.log('⚠️  Validation Issues:');
       validationResults.issues.forEach(issue => console.log(`   - ${issue}`));
@@ -140,7 +184,7 @@ async function rebuild() {
     console.error('❌ Validation failed:', (validationError as Error).message);
     console.log('⚠️  Skipping validation due to database compatibility issues');
   }
-  
+
   // Summary
   console.log('\n📊 Summary:');
   console.log(`   Total nodes: ${nodes.length}`);
@@ -153,21 +197,21 @@ async function rebuild() {
   console.log(`   With Properties: ${stats.withProperties}`);
   console.log(`   With Operations: ${stats.withOperations}`);
   console.log(`   With Documentation: ${stats.withDocs}`);
-  
+
   // Sanitize templates if they exist
   console.log('\n🧹 Checking for templates to sanitize...');
   const templateCount = db.prepare('SELECT COUNT(*) as count FROM templates').get() as { count: number };
-  
+
   if (templateCount && templateCount.count > 0) {
     console.log(`   Found ${templateCount.count} templates, sanitizing...`);
     const sanitizer = new TemplateSanitizer();
     let sanitizedCount = 0;
-    
+
     const templates = db.prepare('SELECT id, name, workflow_json FROM templates').all() as any[];
     for (const template of templates) {
       const originalWorkflow = JSON.parse(template.workflow_json);
       const { sanitized: sanitizedWorkflow, wasModified } = sanitizer.sanitizeWorkflow(originalWorkflow);
-      
+
       if (wasModified) {
         const stmt = db.prepare('UPDATE templates SET workflow_json = ? WHERE id = ?');
         stmt.run(JSON.stringify(sanitizedWorkflow), template.id);
@@ -175,14 +219,14 @@ async function rebuild() {
         console.log(`   ✅ Sanitized template ${template.id}: ${template.name}`);
       }
     }
-    
+
     console.log(`   Sanitization complete: ${sanitizedCount} templates cleaned`);
   } else {
     console.log('   No templates found in database');
   }
-  
+
   console.log('\n✨ Rebuild complete!');
-  
+
   db.close();
 }
 

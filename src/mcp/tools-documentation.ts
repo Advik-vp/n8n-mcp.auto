@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import { toolsDocumentation } from './tool-docs';
 
 export function getToolDocumentation(toolName: string, depth: 'essentials' | 'full' = 'essentials'): string {

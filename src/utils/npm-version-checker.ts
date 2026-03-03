@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * NPM Version Checker Utility
  *
  * Checks if the current n8n-mcp version is outdated by comparing

@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import type { UIAppConfig } from './types';
 
 export const UI_APP_CONFIGS: UIAppConfig[] = [

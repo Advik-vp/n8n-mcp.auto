@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Error Sanitizer for Startup Errors (v2.18.3)
  * Extracts and sanitizes error messages with security-focused patterns
  * Now uses shared sanitization utilities to avoid code duplication

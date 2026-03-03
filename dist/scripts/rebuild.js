@@ -46,14 +46,53 @@ const path = __importStar(require("path"));
 async function rebuild() {
     console.log('🔄 Rebuilding n8n node database...\n');
     const dbPath = process.env.NODE_DB_PATH || './data/nodes.db';
+    if (fs.existsSync(dbPath)) {
+        try {
+            fs.unlinkSync(dbPath);
+            console.log(`🗑️  Deleted existing database at ${dbPath}`);
+        }
+        catch (e) {
+            console.warn(`⚠️  Could not delete existing database: ${e.message}`);
+        }
+    }
     const db = await (0, database_adapter_1.createDatabaseAdapter)(dbPath);
     const loader = new node_loader_1.N8nNodeLoader();
     const parser = new node_parser_1.NodeParser();
     const mapper = new docs_mapper_1.DocsMapper();
     const repository = new node_repository_1.NodeRepository(db);
     const toolVariantGenerator = new tool_variant_generator_1.ToolVariantGenerator();
-    const schema = fs.readFileSync(path.join(__dirname, '../../src/database/schema.sql'), 'utf8');
-    db.exec(schema);
+    const schemaPath = path.join(__dirname, '../../src/database/schema.sql');
+    const schema = fs.readFileSync(schemaPath, 'utf8');
+    const hasFTS5 = db.checkFTS5Support();
+    if (hasFTS5) {
+        db.exec(schema);
+    }
+    else {
+        console.warn('⚠️  FTS5 support not detected. Cleaning schema to remove virtual tables and triggers...');
+        let safeSchema = schema;
+        safeSchema = safeSchema.replace(/CREATE VIRTUAL TABLE[\s\S]*?;/gi, '-- FTS5 virtual table removed');
+        safeSchema = safeSchema.replace(/CREATE TRIGGER[\s\S]*?nodes_fts[\s\S]*?END;/gi, '-- FTS5 trigger removed');
+        fs.writeFileSync('./data/safe_schema.sql', safeSchema);
+        try {
+            db.exec(safeSchema);
+        }
+        catch (error) {
+            console.error('❌ Failed to initialize database schema even after cleaning:', error.message);
+            console.warn('🔄 Attempting more aggressive schema cleaning...');
+            const lines = schema.split('\n');
+            const filteredLines = lines.filter(line => !line.toUpperCase().includes('VIRTUAL') &&
+                !line.toUpperCase().includes('TRIGGER') &&
+                !line.toUpperCase().includes('FTS5'));
+            try {
+                db.exec(filteredLines.join('\n'));
+            }
+            catch (retryError) {
+                throw new Error(`Schema initialization failed: ${retryError.message}`);
+            }
+        }
+    }
+    const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
+    console.log(`📋 Tables in database before delete: ${tables.map(t => t.name).sort().join(', ')}`);
     db.exec('DELETE FROM nodes');
     console.log('🗑️  Cleared existing data\n');
     const nodes = await loader.loadAllNodes();

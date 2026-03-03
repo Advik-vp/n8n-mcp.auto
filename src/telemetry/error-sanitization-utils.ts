@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Shared Error Sanitization Utilities
  * Used by both error-sanitizer.ts and event-tracker.ts to avoid code duplication
  *

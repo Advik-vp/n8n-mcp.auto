@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * @deprecated This fixed HTTP server is deprecated as of v2.31.8.
  * Use SingleSessionHTTPServer from http-server-single-session.ts instead.
  *

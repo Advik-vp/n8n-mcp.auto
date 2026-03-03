@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Intent sanitizer for removing PII from user intent strings
  * Ensures privacy by masking sensitive information
  */

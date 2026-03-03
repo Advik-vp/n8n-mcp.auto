@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Startup Checkpoint System
  * Defines checkpoints throughout the server initialization process
  * to identify where failures occur

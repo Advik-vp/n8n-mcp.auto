@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Shared Database Manager - Singleton for cross-session database connection
  *
  * This module implements a singleton pattern to share a single database connection

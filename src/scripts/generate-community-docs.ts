@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * CLI script for generating AI-powered documentation for community nodes.
  *
  * Usage:

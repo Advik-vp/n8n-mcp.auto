@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Post-Update Validator
  *
  * Generates comprehensive, AI-friendly migration reports after node version upgrades.

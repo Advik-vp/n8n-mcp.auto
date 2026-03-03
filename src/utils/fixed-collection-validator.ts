@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Generic utility for validating and fixing fixedCollection structures in n8n nodes
  * Prevents the "propertyValues[itemName] is not iterable" error
  */

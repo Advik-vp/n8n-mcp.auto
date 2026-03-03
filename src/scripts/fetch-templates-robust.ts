@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import { createDatabaseAdapter } from '../database/database-adapter';
 import { TemplateRepository } from '../templates/template-repository';
 import { TemplateFetcher } from '../templates/template-fetcher';

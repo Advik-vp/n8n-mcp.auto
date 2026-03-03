@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 // Export n8n node type definitions and utilities
 export * from './node-types';
 export * from './type-structures';

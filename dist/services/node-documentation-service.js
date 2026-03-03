@@ -59,8 +59,8 @@ class NodeDocumentationService {
     initializeDatabase() {
         if (!this.db)
             throw new Error('Database not initialized');
-        const schema = `
--- Main nodes table with documentation and examples
+        const hasFTS5 = this.db.checkFTS5Support();
+        const baseSchema = `
 CREATE TABLE IF NOT EXISTS nodes (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   node_type TEXT UNIQUE NOT NULL,
@@ -117,7 +117,10 @@ CREATE INDEX IF NOT EXISTS idx_nodes_category ON nodes(category);
 CREATE INDEX IF NOT EXISTS idx_nodes_code_hash ON nodes(code_hash);
 CREATE INDEX IF NOT EXISTS idx_nodes_name ON nodes(name);
 CREATE INDEX IF NOT EXISTS idx_nodes_is_trigger ON nodes(is_trigger);
-
+`;
+        this.db.exec(baseSchema);
+        if (hasFTS5) {
+            const ftsSchema = `
 -- Full Text Search
 CREATE VIRTUAL TABLE IF NOT EXISTS nodes_fts USING fts5(
   node_type,
@@ -149,7 +152,10 @@ BEGIN
   INSERT INTO nodes_fts(rowid, node_type, name, display_name, description, category, documentation_markdown, aliases)
   VALUES (new.id, new.node_type, new.name, new.display_name, new.description, new.category, new.documentation_markdown, new.aliases);
 END;
-
+`;
+            this.db.exec(ftsSchema);
+        }
+        const otherSchema = `
 -- Documentation sources table
 CREATE TABLE IF NOT EXISTS documentation_sources (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -169,7 +175,7 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
   extraction_date DATETIME DEFAULT CURRENT_TIMESTAMP
 );
     `;
-        this.db.exec(schema);
+        this.db.exec(otherSchema);
     }
     async storeNode(nodeInfo) {
         await this.ensureInitialized();

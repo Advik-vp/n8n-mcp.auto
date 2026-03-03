@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * AI Tool Sub-Node Validators
  *
  * Implements validation logic for all 13 AI tool sub-nodes from

@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Cache utilities for flexible instance configuration
  * Provides hash creation, metrics tracking, and cache configuration
  */

@@ -1,5 +1,9 @@
 #!/usr/bin/env npx tsx
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Test script for enhanced node type suggestions
  * Tests the NodeSimilarityService to ensure it provides helpful suggestions
  * for unknown or incorrectly typed nodes in workflows.

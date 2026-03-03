@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Seed canonical AI tool examples into the database
  *
  * These hand-crafted examples demonstrate best practices for critical AI tools

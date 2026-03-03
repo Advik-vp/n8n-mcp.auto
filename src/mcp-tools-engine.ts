@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * MCPEngine - A simplified interface for benchmarking MCP tool execution
  * This directly implements the MCP tool functionality without server dependencies
  */

@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Manual testing script for execution filtering feature
  *
  * This script demonstrates all modes of the n8n_get_execution tool

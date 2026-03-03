@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * AI-powered documentation generator for community nodes.
  *
  * Uses a local LLM (Qwen or compatible) via OpenAI-compatible API

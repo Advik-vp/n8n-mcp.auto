@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Single-Session HTTP server for n8n-MCP
  * Implements Hybrid Single-Session Architecture for protocol compliance
  * while maintaining simplicity for single-player use case

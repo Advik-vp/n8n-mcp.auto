@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Event Tracker for Telemetry (v2.18.3)
  * Handles all event tracking logic extracted from TelemetryManager
  * Now uses shared sanitization utilities to avoid code duplication

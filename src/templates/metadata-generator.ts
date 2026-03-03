@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import OpenAI from 'openai';
 import { z } from 'zod';
 import { logger } from '../utils/logger';

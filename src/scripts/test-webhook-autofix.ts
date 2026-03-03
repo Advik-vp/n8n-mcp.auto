@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 
 /**
  * Test script for webhook path autofixer functionality

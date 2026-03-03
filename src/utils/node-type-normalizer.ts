@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Universal Node Type Normalizer - FOR DATABASE OPERATIONS ONLY
  *
  * ⚠️ WARNING: Do NOT use before n8n API calls!

@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import { DatabaseAdapter } from './database-adapter';
 import { ParsedNode } from '../parsers/node-parser';
 import { SQLiteStorageService } from '../services/sqlite-storage-service';

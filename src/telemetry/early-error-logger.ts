@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Early Error Logger (v2.18.3)
  * Captures errors that occur BEFORE the main telemetry system is ready
  * Uses direct Supabase insert to bypass batching and ensure immediate persistence

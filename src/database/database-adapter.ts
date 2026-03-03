@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import { promises as fs } from 'fs';
 import * as fsSync from 'fs';
 import path from 'path';

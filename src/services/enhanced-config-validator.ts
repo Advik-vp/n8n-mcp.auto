@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Enhanced Configuration Validator Service
  * 
  * Provides operation-aware validation for n8n nodes with reduced false positives.

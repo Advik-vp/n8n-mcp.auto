@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * PropertyFilter Service
  * 
  * Intelligently filters node properties to return only essential and commonly-used ones.

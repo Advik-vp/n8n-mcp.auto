@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Instance Context for flexible configuration support
  *
  * Allows the n8n-mcp engine to accept instance-specific configuration

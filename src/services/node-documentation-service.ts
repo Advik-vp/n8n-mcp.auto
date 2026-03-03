@@ -1,9 +1,13 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import { createHash } from 'crypto';
 import path from 'path';
 import { promises as fs } from 'fs';
 import { logger } from '../utils/logger';
 import { NodeSourceExtractor } from '../utils/node-source-extractor';
-import { 
+import {
   EnhancedDocumentationFetcher,
   EnhancedNodeDocumentation,
   OperationInfo,
@@ -62,64 +66,64 @@ export class NodeDocumentationService {
   private docsFetcher: EnhancedDocumentationFetcher;
   private dbPath: string;
   private initialized: Promise<void>;
-  
+
   constructor(dbPath?: string) {
     // Determine database path with multiple fallbacks for npx support
     this.dbPath = dbPath || process.env.NODE_DB_PATH || this.findDatabasePath();
-    
+
     // Ensure directory exists
     const dbDir = path.dirname(this.dbPath);
     if (!require('fs').existsSync(dbDir)) {
       require('fs').mkdirSync(dbDir, { recursive: true });
     }
-    
+
     this.extractor = new NodeSourceExtractor();
     this.docsFetcher = new EnhancedDocumentationFetcher();
-    
+
     // Initialize database asynchronously
     this.initialized = this.initializeAsync();
   }
-  
+
   private findDatabasePath(): string {
     const fs = require('fs');
-    
+
     // Priority order for database locations:
     // 1. Local working directory (current behavior)
     const localPath = path.join(process.cwd(), 'data', 'nodes.db');
     if (fs.existsSync(localPath)) {
       return localPath;
     }
-    
+
     // 2. Package installation directory (for npx)
     const packagePath = path.join(__dirname, '..', '..', 'data', 'nodes.db');
     if (fs.existsSync(packagePath)) {
       return packagePath;
     }
-    
+
     // 3. Global npm modules directory (for global install)
     const globalPath = path.join(__dirname, '..', '..', '..', 'data', 'nodes.db');
     if (fs.existsSync(globalPath)) {
       return globalPath;
     }
-    
+
     // 4. Default to local path (will be created if needed)
     return localPath;
   }
-  
+
   private async initializeAsync(): Promise<void> {
     try {
       this.db = await createDatabaseAdapter(this.dbPath);
-      
+
       // Initialize database with new schema
       this.initializeDatabase();
-      
+
       logger.info('Node Documentation Service initialized');
     } catch (error) {
       logger.error('Failed to initialize database adapter', error);
       throw error;
     }
   }
-  
+
   private async ensureInitialized(): Promise<void> {
     await this.initialized;
     if (!this.db) {
@@ -129,9 +133,12 @@ export class NodeDocumentationService {
 
   private initializeDatabase(): void {
     if (!this.db) throw new Error('Database not initialized');
-    // Execute the schema directly
-    const schema = `
--- Main nodes table with documentation and examples
+
+    // Check for FTS5 support
+    const hasFTS5 = this.db.checkFTS5Support();
+
+    // Main nodes table with documentation and examples
+    const baseSchema = `
 CREATE TABLE IF NOT EXISTS nodes (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   node_type TEXT UNIQUE NOT NULL,
@@ -188,7 +195,12 @@ CREATE INDEX IF NOT EXISTS idx_nodes_category ON nodes(category);
 CREATE INDEX IF NOT EXISTS idx_nodes_code_hash ON nodes(code_hash);
 CREATE INDEX IF NOT EXISTS idx_nodes_name ON nodes(name);
 CREATE INDEX IF NOT EXISTS idx_nodes_is_trigger ON nodes(is_trigger);
+`;
 
+    this.db.exec(baseSchema);
+
+    if (hasFTS5) {
+      const ftsSchema = `
 -- Full Text Search
 CREATE VIRTUAL TABLE IF NOT EXISTS nodes_fts USING fts5(
   node_type,
@@ -220,7 +232,11 @@ BEGIN
   INSERT INTO nodes_fts(rowid, node_type, name, display_name, description, category, documentation_markdown, aliases)
   VALUES (new.id, new.node_type, new.name, new.display_name, new.description, new.category, new.documentation_markdown, new.aliases);
 END;
+`;
+      this.db.exec(ftsSchema);
+    }
 
+    const otherSchema = `
 -- Documentation sources table
 CREATE TABLE IF NOT EXISTS documentation_sources (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -240,8 +256,8 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
   extraction_date DATETIME DEFAULT CURRENT_TIMESTAMP
 );
     `;
-    
-    this.db!.exec(schema);
+
+    this.db.exec(otherSchema);
   }
 
   /**
@@ -250,7 +266,7 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
   async storeNode(nodeInfo: NodeInfo): Promise<void> {
     await this.ensureInitialized();
     const hash = this.generateHash(nodeInfo.sourceCode);
-    
+
     const stmt = this.db!.prepare(`
       INSERT OR REPLACE INTO nodes (
         node_type, name, display_name, description, category, subcategory, icon,
@@ -313,10 +329,10 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
     const stmt = this.db!.prepare(`
       SELECT * FROM nodes WHERE node_type = ? OR name = ? COLLATE NOCASE
     `);
-    
+
     const row = stmt.get(nodeType, nodeType);
     if (!row) return null;
-    
+
     return this.rowToNodeInfo(row);
   }
 
@@ -327,7 +343,7 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
     await this.ensureInitialized();
     let query = 'SELECT * FROM nodes WHERE 1=1';
     const params: any = {};
-    
+
     if (options.query) {
       query += ` AND id IN (
         SELECT rowid FROM nodes_fts 
@@ -335,38 +351,38 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
       )`;
       params.query = options.query;
     }
-    
+
     if (options.nodeType) {
       query += ' AND node_type LIKE @nodeType';
       params.nodeType = `%${options.nodeType}%`;
     }
-    
+
     if (options.packageName) {
       query += ' AND package_name = @packageName';
       params.packageName = options.packageName;
     }
-    
+
     if (options.category) {
       query += ' AND category = @category';
       params.category = options.category;
     }
-    
+
     if (options.hasCredentials !== undefined) {
       query += ' AND has_credentials = @hasCredentials';
       params.hasCredentials = options.hasCredentials ? 1 : 0;
     }
-    
+
     if (options.isTrigger !== undefined) {
       query += ' AND is_trigger = @isTrigger';
       params.isTrigger = options.isTrigger ? 1 : 0;
     }
-    
+
     query += ' ORDER BY name LIMIT @limit';
     params.limit = options.limit || 20;
-    
+
     const stmt = this.db!.prepare(query);
     const rows = stmt.all(params);
-    
+
     return rows.map(row => this.rowToNodeInfo(row));
   }
 
@@ -391,53 +407,53 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
   }> {
     await this.ensureInitialized();
     logger.info('Starting complete database rebuild...');
-    
+
     // Clear existing data
     this.db!.exec('DELETE FROM nodes');
     this.db!.exec('DELETE FROM extraction_stats');
-    
+
     // Ensure documentation repository is available
     await this.docsFetcher.ensureDocsRepository();
-    
+
     const stats = {
       total: 0,
       successful: 0,
       failed: 0,
       errors: [] as string[]
     };
-    
+
     try {
       // Get all available nodes
       const availableNodes = await this.extractor.listAvailableNodes();
       stats.total = availableNodes.length;
-      
+
       logger.info(`Found ${stats.total} nodes to process`);
-      
+
       // Process nodes in batches
       const batchSize = 10;
       for (let i = 0; i < availableNodes.length; i += batchSize) {
         const batch = availableNodes.slice(i, i + batchSize);
-        
+
         await Promise.all(batch.map(async (node) => {
           try {
             // Build node type from package name and node name
             const nodeType = `n8n-nodes-base.${node.name}`;
-            
+
             // Extract source code
             const nodeData = await this.extractor.extractNodeSource(nodeType);
             if (!nodeData || !nodeData.sourceCode) {
               throw new Error('Failed to extract node source');
             }
-            
+
             // Parse node definition to get metadata
             const nodeDefinition = this.parseNodeDefinition(nodeData.sourceCode);
-            
+
             // Get enhanced documentation
             const enhancedDocs = await this.docsFetcher.getEnhancedNodeDocumentation(nodeType);
-            
+
             // Generate example
             const example = ExampleGenerator.generateFromNodeDefinition(nodeDefinition);
-            
+
             // Prepare node info with enhanced documentation
             const nodeInfo: NodeInfo = {
               nodeType: nodeType,
@@ -469,10 +485,10 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
               isTrigger: node.name.toLowerCase().includes('trigger'),
               isWebhook: node.name.toLowerCase().includes('webhook')
             };
-            
+
             // Store in database
             await this.storeNode(nodeInfo);
-            
+
             stats.successful++;
             logger.debug(`Processed node: ${nodeType}`);
           } catch (error) {
@@ -482,20 +498,20 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
             logger.error(errorMsg);
           }
         }));
-        
+
         logger.info(`Progress: ${Math.min(i + batchSize, availableNodes.length)}/${stats.total} nodes processed`);
       }
-      
+
       // Store statistics
       this.storeStatistics(stats);
-      
+
       logger.info(`Database rebuild complete: ${stats.successful} successful, ${stats.failed} failed`);
-      
+
     } catch (error) {
       logger.error('Database rebuild failed:', error);
       throw error;
     }
-    
+
     return stats;
   }
 
@@ -514,46 +530,46 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
       codex: null,
       alias: null
     };
-    
+
     try {
       // Extract individual properties using specific patterns
-      
+
       // Display name
       const displayNameMatch = sourceCode.match(/displayName\s*[:=]\s*['"`]([^'"`]+)['"`]/);
       if (displayNameMatch) {
         result.displayName = displayNameMatch[1];
       }
-      
+
       // Description
       const descriptionMatch = sourceCode.match(/description\s*[:=]\s*['"`]([^'"`]+)['"`]/);
       if (descriptionMatch) {
         result.description = descriptionMatch[1];
       }
-      
+
       // Icon
       const iconMatch = sourceCode.match(/icon\s*[:=]\s*['"`]([^'"`]+)['"`]/);
       if (iconMatch) {
         result.icon = iconMatch[1];
       }
-      
+
       // Category/group
       const groupMatch = sourceCode.match(/group\s*[:=]\s*\[['"`]([^'"`]+)['"`]\]/);
       if (groupMatch) {
         result.category = groupMatch[1];
       }
-      
+
       // Version
       const versionMatch = sourceCode.match(/version\s*[:=]\s*(\d+)/);
       if (versionMatch) {
         result.version = parseInt(versionMatch[1]);
       }
-      
+
       // Subtitle
       const subtitleMatch = sourceCode.match(/subtitle\s*[:=]\s*['"`]([^'"`]+)['"`]/);
       if (subtitleMatch) {
         result.subtitle = subtitleMatch[1];
       }
-      
+
       // Try to extract properties array
       const propsMatch = sourceCode.match(/properties\s*[:=]\s*(\[[\s\S]*?\])\s*[,}]/);
       if (propsMatch) {
@@ -564,26 +580,26 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
           // Ignore parsing errors
         }
       }
-      
+
       // Check if it's a trigger node
-      if (sourceCode.includes('implements.*ITrigger') || 
-          sourceCode.includes('polling:.*true') ||
-          sourceCode.includes('webhook:.*true') ||
-          result.displayName.toLowerCase().includes('trigger')) {
+      if (sourceCode.includes('implements.*ITrigger') ||
+        sourceCode.includes('polling:.*true') ||
+        sourceCode.includes('webhook:.*true') ||
+        result.displayName.toLowerCase().includes('trigger')) {
         result.isTrigger = true;
       }
-      
+
       // Check if it's a webhook node
-      if (sourceCode.includes('webhooks:') || 
-          sourceCode.includes('webhook:.*true') ||
-          result.displayName.toLowerCase().includes('webhook')) {
+      if (sourceCode.includes('webhooks:') ||
+        sourceCode.includes('webhook:.*true') ||
+        result.displayName.toLowerCase().includes('webhook')) {
         result.isWebhook = true;
       }
-      
+
     } catch (error) {
       logger.debug('Error parsing node definition:', error);
     }
-    
+
     return result;
   }
 
@@ -641,7 +657,7 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
         total_code_size, total_docs_size
       ) VALUES (?, ?, ?, ?, ?)
     `);
-    
+
     // Calculate sizes
     const sizeStats = this.db!.prepare(`
       SELECT 
@@ -652,7 +668,7 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
         SUM(LENGTH(documentation_markdown)) as docs_size
       FROM nodes
     `).get() as any;
-    
+
     stmt.run(
       stats.successful,
       sizeStats?.with_docs || 0,
@@ -679,14 +695,14 @@ CREATE TABLE IF NOT EXISTS extraction_stats (
         SUM(is_webhook) as webhookNodes
       FROM nodes
     `).get() as any;
-    
+
     const packages = this.db!.prepare(`
       SELECT package_name as package, COUNT(*) as count
       FROM nodes
       GROUP BY package_name
       ORDER BY count DESC
     `).all();
-    
+
     return {
       totalNodes: stats?.totalNodes || 0,
       totalPackages: stats?.totalPackages || 0,

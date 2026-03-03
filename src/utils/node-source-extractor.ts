@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { logger } from './logger';

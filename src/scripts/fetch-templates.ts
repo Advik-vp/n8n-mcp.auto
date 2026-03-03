@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 import { createDatabaseAdapter } from '../database/database-adapter';
 import { TemplateService } from '../templates/template-service';
 import * as fs from 'fs';

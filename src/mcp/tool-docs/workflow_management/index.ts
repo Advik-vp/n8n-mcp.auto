@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 export { n8nCreateWorkflowDoc } from './n8n-create-workflow';
 export { n8nGetWorkflowDoc } from './n8n-get-workflow';
 export { n8nUpdateFullWorkflowDoc } from './n8n-update-full-workflow';

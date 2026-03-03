@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Test Protocol Version Negotiation
  * 
  * This script tests the protocol version negotiation logic with different client scenarios.

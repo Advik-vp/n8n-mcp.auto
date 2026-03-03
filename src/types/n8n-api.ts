@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
 // n8n API Types - Ported from n8n-manager-for-ai-agents
 // These types define the structure of n8n API requests and responses
 

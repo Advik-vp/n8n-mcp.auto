@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Event Validator for Telemetry
  * Validates and sanitizes telemetry events using Zod schemas
  */

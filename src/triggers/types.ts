@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Trigger system types for n8n_test_workflow tool
  *
  * Supports 3 trigger categories (all input-capable):

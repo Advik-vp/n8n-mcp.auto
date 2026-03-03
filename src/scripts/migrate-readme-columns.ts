@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Migration script to add README and AI documentation columns to existing databases.
  *
  * Run with: npx tsx src/scripts/migrate-readme-columns.ts

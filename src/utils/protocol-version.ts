@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Protocol Version Negotiation Utility
  * 
  * Handles MCP protocol version negotiation between server and clients,

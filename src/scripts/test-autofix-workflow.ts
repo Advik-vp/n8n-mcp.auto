@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Test script for n8n_autofix_workflow functionality
  *
  * Tests the automatic fixing of common workflow validation errors:

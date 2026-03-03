@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Console Manager for MCP HTTP Server
  * 
  * Prevents console output from interfering with StreamableHTTPServerTransport

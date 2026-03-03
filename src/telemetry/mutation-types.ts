@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2024 AiAdvisors Romuald Czlonkowski
+ * Licensed under the Sustainable Use License v1.0
+ */
+/**
  * Types and interfaces for workflow mutation tracking
  * Purpose: Track workflow transformations to improve partial updates tooling
  */

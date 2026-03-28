@@ -110,6 +110,8 @@ Add to Claude Desktop config:
 }
 ```
 
+
+
 > **Note**: npx will download and run the latest version automatically. The package includes a pre-built database with all n8n node information.
 
 **Configuration file locations:**

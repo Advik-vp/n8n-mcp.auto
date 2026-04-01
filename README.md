@@ -10,6 +10,8 @@
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/n8n-mcp?referralCode=n8n-mcp)
 
 
+
+
 A Model Context Protocol (MCP) server that provides AI assistants with comprehensive access to n8n node documentation, properties, and operations. Deploy in minutes to give Claude and other AI assistants deep knowledge about n8n's 1,236 workflow automation nodes (806 core + 430 community).
 
 ## Overview
